@@ -1,4 +1,4 @@
-data11 <- as.numeric(read.table("Input/day11.txt", sep = ",")[1,])
+data11 <- as.numeric(read.table("Input/day11.txt", sep = ",")[1, ])
 source("run_intcode.R")
 
 #part1--------
@@ -24,5 +24,5 @@ in_fun(run_intcode(data11, input_fun = in_fun), type = "result1")
 #part2------
 res <- in_fun(run_intcode(data11, input_fun = in_fun, start_col = 1), type = "result2")
 
-plot(res, pch = 15, cex = 2.5, col = "hotpink2", axes = FALSE, 
-     ylim = c(-10, 10), xlab = "", ylab = "")
+plot(res, pch = 15, cex = 3, col = "hotpink2", axes = FALSE, ylim = c(-10, 10), 
+     xlab = "", ylab = "")

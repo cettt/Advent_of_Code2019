@@ -5,7 +5,7 @@ source("run_intcode.R")
 run_intcode(data13, o_fun = function(x) table(x[seq_along(x) %% 3 == 0])["2"])
 
 # part2--------
-in_fun <- function(output) {
+move_tile <- function(output) {
   envir <- parent.frame()
   if (!exists("pad_x", envir)) {
     idx <- which(output[seq_len(length(output) / 3L) * 3L] == 3)
@@ -20,4 +20,4 @@ in_fun <- function(output) {
   res
 }
 
-tail(run_intcode(c(2L, data13[-1]), input_fun = in_fun), 1)
+tail(run_intcode(c(2L, data13[-1]), input_fun = move_tile), 1)

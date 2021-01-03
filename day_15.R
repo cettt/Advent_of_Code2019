@@ -8,17 +8,17 @@ crawl_maze <- function(output) {
     envir$xy <- 0*1i
     envir$cur_dir <- 1 + 0*1i
   } else if (output == 0L) {
-      envir$cur_dir <- envir$cur_dir * 1i
+    envir$cur_dir <- envir$cur_dir * 1i
   } else {
-      envir$xy <- c(envir$xy[1] + envir$cur_dir, envir$xy)
-      envir$cur_dir <- envir$cur_dir * (-1i)
-      if (output == 2L) envir$oxygen <- envir$xy[1]
+    envir$xy <- c(envir$xy[1] + envir$cur_dir, envir$xy)
+    envir$cur_dir <- envir$cur_dir * (-1i)
+    if (output == 2L) envir$oxygen <- envir$xy[1]
   }
   envir$output <- NULL
   
   if (envir$xy[1] == 0*1i & length(envir$xy) > 1) envir$run <- FALSE
   return(which(c(1i, -1i, -1, 1) == envir$cur_dir))
-
+  
 }
 
 o_fun_maze <- function(output) {
@@ -27,34 +27,32 @@ o_fun_maze <- function(output) {
 }
 
 bfs <- function(.from, maze = res$maze) {
-  queue <- data.frame(z = .from, parent = NA_complex_, step = 0)
+  queue <- .from
+  parent_vec <- NA_complex_
   j <- 1L
+  step <- 0L
   
-  while (j <= nrow(queue)) {
-    parent <- queue[j, 1]
-    new_edge <- maze[abs(parent - maze) == 1]
-    new_edge <- new_edge[! new_edge %in% queue[, 1]]
-    step <- queue[j, 3] + 1L
-    if (length(new_edge) > 0) {
-      queue <- rbind(queue, data.frame(z = new_edge, parent = parent, step = step))
-    }
-    j <- j + 1
+  while (j <= length(queue)) {
+    parent <- queue[j]
+    new_edge <- setdiff(maze[abs(parent - maze) == 1], queue)
+    queue <- c(queue, new_edge)
+    parent_vec <- c(parent_vec, rep(parent, length(new_edge)))
+    step <- c(step, rep(step[j] + 1L, length(new_edge)))
+    j <- j + 1L
   }
-  return(queue)
+  return(list(z = queue, parent = parent_vec, step = step))
 }
 
-maze_path <- function(.from, .to, maze = res$maze) {
-  queue <- bfs(.from, maze)
-  path <- queue[queue[, 1] == .to, ]
-  while (! .from %in% path[, 1]) {
-    path <- rbind(path, queue[queue[, 1] == path[nrow(path), 2], ])
-  }
-  return(path[, 1])
+maze_path <- function(.from, .to, queue) {
+  path <- .to
+  while (.from != path[1]) path <- c(queue$parent[which(queue$z == path[1])], path)
+  return(length(path) - 1L)
 }
 
 #part1----------
 res <- run_intcode(data15, input_fun = crawl_maze, o_fun = o_fun_maze)
-length(maze_path(.from = res$oxygen, .to = 0*1i, maze = res$maze)) - 1
+queue <- bfs(res$oxygen)
+maze_path(.from = res$oxygen, .to = 0*1i, queue)
 
 #part2----------
-max(bfs(.from = res$oxygen)$step)
+max(queue$step)

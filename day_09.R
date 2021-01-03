@@ -1,4 +1,4 @@
-data09 <- as.numeric(read.table("Input/day09.txt", sep = ",")[1,])
+data09 <- as.numeric(read.table("Input/day09.txt", sep = ",")[1, ])
 source("run_intcode.R")
 
 #part1-------

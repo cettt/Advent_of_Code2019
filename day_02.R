@@ -1,4 +1,4 @@
-data02 <- as.integer(read.table("Input/day02.txt", sep = ",")[1,])
+data02 <- as.integer(read.table("Input/day02.txt", sep = ",")[1, ])
 source("run_intcode.R")
 
 o_fun <- function(output) parent.frame()$z[1]

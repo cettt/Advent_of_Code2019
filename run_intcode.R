@@ -3,7 +3,7 @@
 # input_fun is a function which generates an based on previous outputs
 
 run_intcode <- function(z, input_fun = function(output) 1, o_fun = NULL, j = 1L,
-                        ...) {
+                        base = 0L, ...) {
   cls <- function(x) if (!is.na(x)) x else 0L# own coalesce function
 
   find_para_val <- function(para_id, j) { #para is either 1 or 2.
@@ -16,11 +16,9 @@ run_intcode <- function(z, input_fun = function(output) 1, o_fun = NULL, j = 1L,
   }
 
   output <- NULL
-  base <- 0L
   run <- TRUE
 
   while (run) {
-    # print(j)
     opcode <- z[j] %% 100L #first two digits contain the opcode
 
     if (!opcode %in% c(3L, 99L)) {
@@ -46,7 +44,7 @@ run_intcode <- function(z, input_fun = function(output) 1, o_fun = NULL, j = 1L,
         z[z[j + 1L] + 1L + dummy_base] <- inp
         j <- j + 2L
       } else {
-        return(list(intcode = z, j = j, output = output))
+        return(list(intcode = z, j = j, base = base, output = output))
       }
     }
     else if (opcode == 4L) { #output
@@ -72,7 +70,6 @@ run_intcode <- function(z, input_fun = function(output) 1, o_fun = NULL, j = 1L,
       j <- j + 2L
     }
     else if (opcode == 99L) break # stop
-
   }
 
   if (is.null(o_fun)) output else o_fun(output)
